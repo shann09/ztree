@@ -19,20 +19,22 @@
   console.log("tree",tree);
   console.log("raw",ztree.get_raw(tree));
   console.log("treelike",ztree.get_treelike(tree));
-  console.log("full-tre",ztree.get_tree(tree));
-  console.log("descendant",ztree.pluck_descendant(tree,["1"]));
-  console.log("ancestors",ztree.pluck_ancestors(tree,["5"]));
-  console.log("survivors",ztree.pluck_survivors(tree,["2"]));
-  console.log("siblings",ztree.pluck_siblings(tree,"100"));
-  console.log("siblings",ztree.pluck_siblings(tree,"0"));
-  console.log("siblings",ztree.pluck_siblings(tree,"3"));
-  console.log("siblings",ztree.pluck_siblings(tree,"3"));
-  console.log("siblings",ztree.pluck_siblings(tree,"6"));
-  console.log("prenext",ztree.pluck_prenext(tree,"6"));
-  console.log("prenext",ztree.pluck_prenext(tree,"4"));
-  console.log("prenext",ztree.pluck_prenext(tree,"0"));
-  console.log("prenext",ztree.pluck_prenext(tree,"8"));
-  console.log("find",ztree.find(tree,"6"));
+  console.log("full-tree",ztree.get_tree(tree));
+  console.log("descendant 1",ztree.pluck_descendant(tree,["1"]));
+  console.log("descendant 1 5",ztree.pluck_descendant(tree,["1","5"]));
+  console.log("ancestors 5",ztree.pluck_ancestors(tree,["5"]));
+  console.log("ancestors 5 7",ztree.pluck_ancestors(tree,["5","7"]));
+  console.log("survivors 2",ztree.pluck_survivors(tree,["2"]));
+  console.log("survivors 2 4",ztree.pluck_survivors(tree,["2","4"]));
+  console.log("siblings 100",ztree.pluck_siblings(tree,"100"));
+  console.log("siblings 0",ztree.pluck_siblings(tree,"0"));
+  console.log("siblings 3",ztree.pluck_siblings(tree,"3"));
+  console.log("siblings 6",ztree.pluck_siblings(tree,"6"));
+  console.log("prenext 6",ztree.pluck_prenext(tree,"6"));
+  console.log("prenext 4",ztree.pluck_prenext(tree,"4"));
+  console.log("prenext 0",ztree.pluck_prenext(tree,"0"));
+  console.log("prenext 8",ztree.pluck_prenext(tree,"8"));
+  console.log("find 6",ztree.find(tree,"6"));
 </script>
 </body>
 </html>
