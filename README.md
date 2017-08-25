@@ -45,7 +45,7 @@ js: 参考tree.html
 
 ```
 导入
-    html的<script>引入js，请开启^:export，关闭aset，然后编译，再引入
+    html的<script>引入js，请反注释^:export，注释掉(aset js/exports k f)，然后编译，再引入
 
     commonjs导入依赖，请增加依赖 "cl-js-ztree": "^x.x.x"，然后import ztree from 'cl-js-ztree';
 

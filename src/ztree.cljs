@@ -291,7 +291,8 @@
                "find" find
                "get_tree" get-tree
                }]
-  (aset js/exports k f))
+  (aset js/exports k f)
+  )
 
 
 ;下面这种方式测试不成功，但可能适用其他import方式，待学习
