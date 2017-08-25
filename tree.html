@@ -1,0 +1,38 @@
+<html>
+<body>
+<script type="text/javascript" src="out/ztree.js"></script>
+<script type="text/javascript">
+  console.log("---------out javascript---------");
+  var tree = ztree.create_js_tree(
+    ["key","parentKey","sortNum","children"],
+    [
+      { "key": "3" ,"parentKey": "1" ,"sortNum": 3, "name": "d"},
+      { "key": "7" ,"parentKey": "2" ,"sortNum": 7, "name": "h"},
+      { "key": "4" ,"parentKey": "1" ,"sortNum": 8 ,"name": "e"},
+      { "key": "0" ,"parentKey": null ,"sortNum": 0 ,"name": "a"},
+      { "key": "6" ,"parentKey": "5" ,"sortNum": 6, "name": "g"},
+      { "key": "2" ,"parentKey": "0" ,"sortNum": 2, "name": "c"},
+      { "key": "1" ,"parentKey": "0" ,"sortNum": 1, "name": "b"},
+      { "key": "5" ,"parentKey": "2" ,"sortNum": 5, "name": "f"},
+      { "key": "8" ,"parentKey": "1" ,"sortNum": 3, "name": "i"},
+    ]);
+  console.log("tree",tree);
+  console.log("raw",ztree.get_raw(tree));
+  console.log("treelike",ztree.get_treelike(tree));
+  console.log("full-tre",ztree.get_tree(tree));
+  console.log("descendant",ztree.pluck_descendant(tree,["1"]));
+  console.log("ancestors",ztree.pluck_ancestors(tree,["5"]));
+  console.log("survivors",ztree.pluck_survivors(tree,["2"]));
+  console.log("siblings",ztree.pluck_siblings(tree,"100"));
+  console.log("siblings",ztree.pluck_siblings(tree,"0"));
+  console.log("siblings",ztree.pluck_siblings(tree,"3"));
+  console.log("siblings",ztree.pluck_siblings(tree,"3"));
+  console.log("siblings",ztree.pluck_siblings(tree,"6"));
+  console.log("prenext",ztree.pluck_prenext(tree,"6"));
+  console.log("prenext",ztree.pluck_prenext(tree,"4"));
+  console.log("prenext",ztree.pluck_prenext(tree,"0"));
+  console.log("prenext",ztree.pluck_prenext(tree,"8"));
+  console.log("find",ztree.find(tree,"6"));
+</script>
+</body>
+</html>

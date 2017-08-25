@@ -1,0 +1,34 @@
+{
+  "name": "cl-js-ztree",
+  "version": "1.2.4",
+  "description": "an immutable list->tree lib, write by clojurescirpt, can be use with ant design's Table or Tree",
+  "main": "out/ztree.js",
+  "directories": {
+    "doc": "doc",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shann09/ztree.git"
+  },
+  "keywords": [
+    "tree",
+    "list",
+    "clojurescript",
+    "js",
+    "antd"
+  ],
+  "files": [
+    "out/ztree.js",
+    "LICENSE"
+  ],
+  "author": "shann09",
+  "license": "EPL1.0",
+  "bugs": {
+    "url": "https://github.com/shann09/ztree/issues"
+  },
+  "homepage": "https://github.com/shann09/ztree#readme"
+}
