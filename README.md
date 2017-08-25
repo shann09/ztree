@@ -1,10 +1,12 @@
 # ztree
 
-an immutable list->tree lib, write by clojurescirpt, and it can be use with ant design's Table or Tree
+用clojurescript写的js库，根据list中元素的id和parentId等字段把list转换为tree，获取tree中的子孙节点、祖先节点、兄弟节点、上下兄弟节点等
 
-根据list中元素的id和parentId等字段把list转换为tree，可以配合蚂蚁金服(antd)的Table和Tree组件使用，也可以单独使用
+可以用js调用，也可以被clojurescript调用，源码稍作修改也可以被clojure调用
 
-获取tree中的子孙节点、祖先节点、兄弟节点、上下兄弟节点
+可用于配合蚂蚁金服(antd)的Table和Tree组件使用。
+
+list->tree js/cljs lib，work with ant design's Table or Tree. 
 
 ## Usage
 
@@ -209,6 +211,8 @@ var tree = ztree.create_js_tree(
   console.log("prenext",ztree.pluck_prenext(tree,"0"));
   console.log("prenext",ztree.pluck_prenext(tree,"8"));
   console.log("find",ztree.find(tree,"6"));
+  
+  输出同cljs的输出
 ```
 
 发布：
