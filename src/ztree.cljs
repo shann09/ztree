@@ -279,32 +279,6 @@
       :cljs)
     ))
 
-;使用cljs来写代码可以获得不少好处：
-;    不变性，gcc高级编译，lisp函数式写法，宏，clojure代码重用，记忆函数，尾递归优化等等等等
-;cljs非常适合编写依赖库
-;
-;export的目的就是为了让js可以调用编译好的包，
-;如果只是想让cljs调用（参考core_test.cljs），那就不需要export相关代码（可以删掉^:exoprt和aset js/exports）
-;
-;export的方式有2种
-;  一种是^:export
-;      这种方式会把被标记为^:export的方法或对象暴露到全局，
-;      当前项目不使用这种方式，所以上面的标记都被注释掉，标记方式类似如下
-;          (defprotocol (^:export some-fn []) (^:export some-fn-2 []) )
-;          (defn ^:export some-fn-3 [] ... )
-;      用于直接在html的<script>标签中引入js包
-;      然后用namespace.exported_fn的方式调用，参考tree.html，类似如下
-;          ztree.create_js_tree(...);
-;  另一种是aset js/exports
-;      即把暴露的方法或对象绑定到exports上
-;      这种方式用于将代码打包为npm依赖包，上传到npm仓库上，
-;          参考package.json，npm init,npm login,npm publish
-;      需要引用该依赖包的代码可以配置package.json增加 "cl-js-ztree": "^1.0.35",
-;      并使用npm install来下载该依赖，然后调用方式类似如下
-;          //在.js或.jsx文件中引入
-;          import ztree from 'cl-js-ztree';
-;          ztree.create_js_tree(...);
-
 (doseq [[k f] {"create_js_tree" create-js-tree
                "create_cljs_tree" create-cljs-tree
                "get_raw" get-raw

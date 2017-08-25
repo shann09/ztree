@@ -8,7 +8,13 @@
 
 list->tree js/cljs lib，work with ant design's Table or Tree. 
 
-## Usage
+## 当前版本
+
+npm： 
+
+["cl-js-ztree": "^1.2.4"]
+
+## 使用文档
 
 编译：
 
@@ -38,6 +44,13 @@ lein clean;lein cljsbuild once min;
 js: 参考tree.html
 
 ```
+导入
+    html的<script>引入js，请开启^:export，关闭aset，然后编译，再引入
+
+    commonjs导入依赖，请增加依赖 "cl-js-ztree": "^x.x.x"，然后import ztree from 'cl-js-ztree';
+
+    具体细节，参考下面的"打包成依赖库"
+
 ;创建一棵树，
 ;  第一个参数[id字段 父节点id字段 排序字段 子节点字段]是定义树的结构，
 ;      前3个可根据list中字段名称灵活定义，子节点字段可以指定生成的json-tree的子节点字段名称
@@ -55,39 +68,48 @@ var tree = ztree.create_js_tree(
       { "key": "5" ,"parentKey": "2" ,"sortNum": 5, "name": "f"},
       { "key": "8" ,"parentKey": "1" ,"sortNum": 3, "name": "i"},
     ]);
+  ;ztree.get_raw
   ;返回list，获取原始list
   console.log("raw",ztree.get_raw(tree));
   
-  ;返回list，获取排序后的list，按层级和sortNum排序
+  ;ztree.get_treelike
+  ;返回list，获取排序后的list，按层级和sortNum排序，这是一个中间结果，其他api都是基于这个中间结果计算出来的
   console.log("treelike",ztree.get_treelike(tree));
   
+  ;ztree.get_tree
   ;返回tree，获取真正的tree，即树形的json
   console.log("full-tree",ztree.get_tree(tree));
   
+  ;ztree.pluck_descendant
   ;返回list，获取指定n个key的节点及其所有子孙节点，直到叶子节点，不重复
   console.log("descendant 1",ztree.pluck_descendant(tree,["1"]));
   console.log("descendant 1 5",ztree.pluck_descendant(tree,["1","5"]));
   
+  ;ztree.pluck_ancestors
   ;返回list，获取指定n个key的节点及其所有父辈节点，直到根节点，不重复
   console.log("ancestors 5",ztree.pluck_ancestors(tree,["5"]));
   console.log("ancestors 5 7",ztree.pluck_ancestors(tree,["5","7"]));
   
+  ;ztree.pluck_survivors
   ;返回list，获取（指定n个key的节点及其所有子孙节点）以外的所有节点，即所有节点和descendant的差集
   console.log("survivors 2",ztree.pluck_survivors(tree,["2"]));
   console.log("survivors 2 4",ztree.pluck_survivors(tree,["2","4"]));
   
+  ;ztree.pluck_siblings
   ;返回list，获取指定1个key的节点及其所有兄弟节点，不含子孙节点
   console.log("siblings 100",ztree.pluck_siblings(tree,"100"));
   console.log("siblings 0",ztree.pluck_siblings(tree,"0"));
   console.log("siblings 3",ztree.pluck_siblings(tree,"3"));
   console.log("siblings 6",ztree.pluck_siblings(tree,"6"));
   
+  ;ztree.pluck_prenext
   ;返回长度为3的list，获取指定1个key的节点及其前后2个兄弟节点，[前一个兄弟, 自己, 下一个兄弟]，如果没有对应兄弟，则对应位置会是null
   console.log("prenext 6",ztree.pluck_prenext(tree,"6"));
   console.log("prenext 4",ztree.pluck_prenext(tree,"4"));
   console.log("prenext 0",ztree.pluck_prenext(tree,"0"));
   console.log("prenext 8",ztree.pluck_prenext(tree,"8"));
   
+  ;ztree.find
   ;返回object，获取指定1个key的节点
   console.log("find 6",ztree.find(tree,"6"));
   
@@ -240,11 +262,13 @@ cljs: 参考ztree/core_test.cljs
     输出同js
 ```
 
-## 打包成依赖库：
+## 打包成依赖库
 
 ztree是一个用cljs写的list->tree库，也是一个打包cljs为npm依赖包的教程，源码中有足够丰富的注释
 
 ```
+tree.cljs
+
 ;使用cljs来写代码可以获得不少好处：
 ;    不变性，gcc高级编译，lisp函数式写法，宏，clojure代码重用，记忆函数，尾递归优化等等等等
 ;cljs非常适合编写依赖库
@@ -265,7 +289,7 @@ ztree是一个用cljs写的list->tree库，也是一个打包cljs为npm依赖包
 ;      即把暴露的方法或对象绑定到exports上
 ;      这种方式用于将代码打包为npm依赖包，上传到npm仓库上，
 ;          参考package.json，npm init,npm login,npm publish
-;      需要引用该依赖包的代码可以配置package.json增加 "cl-js-ztree": "^1.0.35",
+;      需要引用该依赖包的代码可以配置package.json增加 "cl-js-ztree": "^x.x.x",
 ;      并使用npm install来下载该依赖，然后调用方式类似如下
 ;          //在.js或.jsx文件中引入
 ;          import ztree from 'cl-js-ztree';
