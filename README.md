@@ -267,7 +267,7 @@ cljs: 参考ztree/core_test.cljs
 ztree是一个用cljs写的list->tree库，也是一个打包cljs为npm依赖包的教程，源码中有足够丰富的注释
 
 ```
-tree.cljs
+ztree.cljs
 
 ;使用cljs来写代码可以获得不少好处：
 ;    不变性，gcc高级编译，lisp函数式写法，宏，clojure代码重用，记忆函数，尾递归优化等等等等
@@ -297,7 +297,7 @@ tree.cljs
 
 ```
 
-发布：
+相关脚本：
 
 ```
 lein new ztree
