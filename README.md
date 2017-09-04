@@ -12,7 +12,7 @@ list->tree js/cljs lib，work with ant design's Table or Tree.
 
 npm： 
 
-["cl-js-ztree": "^1.3.1"]
+["cl-js-ztree": "^1.3.2"]
 
 ## 使用文档
 
