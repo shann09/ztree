@@ -33,6 +33,7 @@
                    (if (t parentKeyName) (conj p (t parentKeyName)) p)])
                 [#{} #{}]
                 raw)]
+    (if (not= (count k) (count raw)) (throw (js/Error. "key不唯一")))
     (if (contains? k nil) (throw (js/Error. "key不能为null")))
     (doseq [t p]
       (if-not (contains? k t)
