@@ -21,9 +21,9 @@
 ;  ns命名空间必须跟目录结构保持一致，这样才能保证gcc的高级编译模式能够编译成功
 
 
-(defn- unlevel- [s]
-  ;(.log js/console "unlevel-")
-  (map #(dissoc % :ztree/level) s))
+(defn- unkey- [s]
+  ;(.log js/console "unkey-")
+  (map #(dissoc % :ztree/level :ztree/round) s))
 
 (defn- treelike-level- [[keyName parentKeyName sortName _] raw]
   ;检查是否有父节点是不存在的
@@ -37,28 +37,44 @@
     (doseq [t p]
       (if-not (contains? k t)
         (throw (js/Error. (str "找不到父节点: " t))))))
-  (loop [q (reduce conj (.-EMPTY PersistentQueue) raw),
+  (loop [q (reduce conj (.-EMPTY PersistentQueue) raw),     ;循环队列
          s (sorted-set-by (fn [{xlevel :ztree/level xsortNum sortName xvalue keyName}
                                {ylevel :ztree/level ysortNum sortName yvalue keyName}]
                             (if (= xlevel ylevel)
                               (if (= xsortNum ysortNum)
                                 (compare xvalue yvalue)
                                 (compare xsortNum ysortNum))
-                              (compare xlevel ylevel))))]
+                              (compare xlevel ylevel)))),   ;有序集合
+         cr 0,                                              ;当前轮次
+         cra 0,                                             ;当前轮次总序号
+         crn 0,                                             ;当前轮次转下轮序号
+         ]
     (if-not (peek q)
       s
       (let [t (peek q)
             r (pop q)
-            [nq ns] (if-let [pk (nilize (t parentKeyName))]
-                      ;有父节点
-                      (if-let [p (first (filter #(= (% keyName) pk) s))]
-                        ;找到父节点，节点上树
-                        [r (-conj s (assoc t :ztree/level (inc (:ztree/level p))))]
-                        ;没找到父节点，把节点放回队列尾部
-                        [(conj r t) s])
-                      ;没有父节点，顶级节点上树
-                      [r (-conj s (assoc t :ztree/level 1))])]
-        (recur nq ns)))))
+
+            tr (or (t :ztree/round) 0)
+            is-new-round (not= tr cr)
+
+            check (and is-new-round (= cra crn) (throw (js/Error. (str "存在孤岛" t))))
+
+            n-cra (if is-new-round 1 (inc cra))
+
+            [nq ns
+             n-cr n-crn] (if-let [pk (nilize (t parentKeyName))]
+                                             ;有父节点
+                                             (if-let [p (first (filter #(= (% keyName) pk) s))]
+                                               ;找到父节点，节点上树
+                                               [r (-conj s (assoc t :ztree/level (inc (:ztree/level p))))
+                                                tr (if is-new-round 0 crn)]
+                                               ;没找到父节点，把节点放回队列尾部
+                                               [(conj r (assoc t :ztree/round (inc tr))) s
+                                                tr (if is-new-round 1 (inc crn))])
+                                             ;没有父节点，顶级节点上树
+                                             [r (-conj s (assoc t :ztree/level 0))
+                                              tr (if is-new-round 0 crn)])]
+        (recur nq ns n-cr n-cra n-crn)))))
 
 (defn- pluck-descendant- [[keyName parentKeyName _ _] s keyList];^clojure.lang.PersistentTreeSet，^cljs.core.PersistentTreeSet
   (loop [q (reduce conj (.-EMPTY PersistentQueue) keyList)  ;待查找队列
@@ -197,7 +213,7 @@
   )
 
 
-(defrecord Tree [raw treelike-level-fn unlevel-fn
+(defrecord Tree [raw treelike-level-fn unkey-fn
                  pluck-descendant-fn pluck-ancestors-fn pluck-survivors-fn
                  pluck-siblings-fn pluck-prenext-fn
                  find-fn
@@ -210,36 +226,36 @@
       :js (clj->js raw)))
   (get-treelike [_]
     (case lang
-      :cljs (unlevel-fn (treelike-level-fn raw))
-      :js (clj->js (unlevel-fn (treelike-level-fn raw)))))
+      :cljs (unkey-fn (treelike-level-fn raw))
+      :js (clj->js (unkey-fn (treelike-level-fn raw)))))
   (pluck-descendant [_ keyList]
     (case lang
-      :cljs (pluck-descendant-fn (unlevel-fn (treelike-level-fn raw)) keyList)
-      :js (clj->js (pluck-descendant-fn (unlevel-fn (treelike-level-fn raw)) keyList))))
+      :cljs (pluck-descendant-fn (unkey-fn (treelike-level-fn raw)) keyList)
+      :js (clj->js (pluck-descendant-fn (unkey-fn (treelike-level-fn raw)) keyList))))
   (pluck-ancestors [_ keyList]
     (case lang
-      :cljs (pluck-ancestors-fn (unlevel-fn (treelike-level-fn raw)) keyList)
-      :js (clj->js (pluck-ancestors-fn (unlevel-fn (treelike-level-fn raw)) keyList))))
+      :cljs (pluck-ancestors-fn (unkey-fn (treelike-level-fn raw)) keyList)
+      :js (clj->js (pluck-ancestors-fn (unkey-fn (treelike-level-fn raw)) keyList))))
   (pluck-survivors [_ keyList]
     (case lang
-      :cljs (pluck-survivors-fn (unlevel-fn (treelike-level-fn raw)) keyList)
-      :js (clj->js (pluck-survivors-fn (unlevel-fn (treelike-level-fn raw)) keyList))))
+      :cljs (pluck-survivors-fn (unkey-fn (treelike-level-fn raw)) keyList)
+      :js (clj->js (pluck-survivors-fn (unkey-fn (treelike-level-fn raw)) keyList))))
   (pluck-siblings [_ id]
     (case lang
-      :cljs (unlevel-fn (pluck-siblings-fn (treelike-level-fn raw) id))
-      :js (clj->js (unlevel-fn (pluck-siblings-fn (treelike-level-fn raw) id)))))
+      :cljs (unkey-fn (pluck-siblings-fn (treelike-level-fn raw) id))
+      :js (clj->js (unkey-fn (pluck-siblings-fn (treelike-level-fn raw) id)))))
   (pluck-prenext [_ id]
     (case lang
-      :cljs (unlevel-fn (pluck-prenext-fn (pluck-siblings-fn (treelike-level-fn raw) id) id))
-      :js (clj->js (unlevel-fn (pluck-prenext-fn (pluck-siblings-fn (treelike-level-fn raw) id) id)))))
+      :cljs (unkey-fn (pluck-prenext-fn (pluck-siblings-fn (treelike-level-fn raw) id) id))
+      :js (clj->js (unkey-fn (pluck-prenext-fn (pluck-siblings-fn (treelike-level-fn raw) id) id)))))
   (find [_ id]
     (case lang
-      :cljs (find-fn (unlevel-fn (treelike-level-fn raw)) id)
-      :js (clj->js (find-fn (unlevel-fn (treelike-level-fn raw)) id))))
+      :cljs (find-fn (unkey-fn (treelike-level-fn raw)) id)
+      :js (clj->js (find-fn (unkey-fn (treelike-level-fn raw)) id))))
   (get-tree [_]
     (case lang
-      :cljs (treeize-fn (unlevel-fn (treelike-level-fn raw)))
-      :js (clj->js (treeize-fn (unlevel-fn (treelike-level-fn raw))))))
+      :cljs (treeize-fn (unkey-fn (treelike-level-fn raw)))
+      :js (clj->js (treeize-fn (unkey-fn (treelike-level-fn raw))))))
   )
 
 (defn
@@ -249,7 +265,7 @@
     (Tree.
       (js->clj raw)
       (memoize (partial treelike-level- ks))
-      (memoize unlevel-)
+      (memoize unkey-)
       (memoize (partial pluck-descendant- ks))
       (memoize (partial pluck-ancestors- ks))
       (memoize (partial pluck-survivors- ks))
@@ -268,7 +284,7 @@
     (Tree.
       raw
       (memoize (partial treelike-level- ks))
-      (memoize unlevel-)
+      (memoize unkey-)
       (memoize (partial pluck-descendant- ks))
       (memoize (partial pluck-ancestors- ks))
       (memoize (partial pluck-survivors- ks))
